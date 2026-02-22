@@ -18,6 +18,11 @@ services:
       start_period: 120s
     networks:
       - database_net
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.moodle-cron.schedule: "@every 15m"
+      ofelia.job-exec.moodle-cron.command: "php /var/www/html/admin/cli/cron.php"
+      ofelia.job-exec.moodle-cron.user: "www-data"
     environment:
       MOODLE_INSTALL_ADMIN_PASS: ${MOODLE_INSTALL_ADMIN_PASS}
       MOODLE_INSTALL_ADMIN_EMAIL: ${MOODLE_INSTALL_ADMIN_EMAIL}
@@ -30,6 +35,17 @@ services:
       MOODLE_DB_PREFIX: ${MOODLE_DB_PREFIX:-mdl_}
       MOODLE_SITE_URL: ${MOODLE_SITE_URL}
       MOODLE_SSL_PROXY: ${MOODLE_SSL_PROXY:-false}
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    command: daemon --docker
+    restart: unless-stopped
+    depends_on:
+      - moodle
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - database_net
 
 networks:
   database_net:

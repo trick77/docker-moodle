@@ -32,8 +32,6 @@ if [ -d "$PLUGIN_SRC" ]; then
     done
 fi
 
-service cron start
-
 if ! php /var/www/html/admin/cli/install_database.php \
     --agree-license \
     --fullname="${MOODLE_SITE_NAME}" \

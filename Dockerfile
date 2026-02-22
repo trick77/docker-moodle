@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y \
     libsodium-dev \
     zlib1g-dev \
     curl \
-    cron \
     ghostscript \
     && rm -rf /var/lib/apt/lists/*
 
@@ -75,10 +74,6 @@ RUN apt-get update && apt-get install -y git unzip \
 COPY config.php /var/www/html/config.php
 
 RUN chown -R www-data:www-data /var/www/html
-
-RUN echo "*/15 * * * * www-data /usr/local/bin/php /var/www/html/admin/cli/cron.php > /dev/null 2>&1" \
-    >> /etc/cron.d/moodle-cron \
-    && chmod 0644 /etc/cron.d/moodle-cron
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
