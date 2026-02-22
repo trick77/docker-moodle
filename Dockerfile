@@ -41,7 +41,7 @@ RUN pecl install redis && docker-php-ext-enable redis
 
 RUN { \
     echo "max_input_vars = 5000"; \
-    echo "memory_limit = 256M"; \
+    echo "memory_limit = 512M"; \
     echo "upload_max_filesize = 20M"; \
     echo "post_max_size = 20M"; \
     } > /usr/local/etc/php/conf.d/moodle.ini
