@@ -43,4 +43,6 @@ if ! php /var/www/html/admin/cli/install_database.php \
     echo "Note: install_database.php exited non-zero (DB may already be installed)"
 fi
 
+chown -R www-data:www-data /var/moodledata
+
 exec apache2-foreground
