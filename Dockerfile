@@ -39,6 +39,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 
 RUN pecl install redis && docker-php-ext-enable redis
 
+RUN echo "max_input_vars = 5000" > /usr/local/etc/php/conf.d/moodle.ini
+
 RUN a2enmod rewrite
 
 RUN ln -sf /dev/stderr /var/log/apache2/error.log \
@@ -50,6 +52,12 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 COPY --from=moodle-src /moodle /var/www/html
+
+RUN apt-get update && apt-get install -y git unzip \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && cd /var/www/html && composer install --no-dev --classmap-authoritative \
+    && apt-get purge -y git unzip && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* \
+    && rm /usr/local/bin/composer
 
 COPY config.php /var/www/html/config.php
 
