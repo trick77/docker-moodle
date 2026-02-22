@@ -34,7 +34,7 @@ No rebuild needed — `entrypoint.sh` copies them in on startup.
 
 ## Database setup
 
-This stack expects a MariaDB container on the `database_net` Docker network. Minimal example (no backups — add your own for production):
+This stack expects a MariaDB container on the `database_net` Docker network. Minimal example — **not production-ready** (no backups, no tuning, no healthchecks):
 
 ```bash
 docker network create database_net
