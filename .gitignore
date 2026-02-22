@@ -1,0 +1,30 @@
+# Docker Compose override
+compose.override.yaml
+
+# Moodle data
+moodledata/
+
+# Environment secrets
+.env
+
+# Custom plugins (contents only — .gitkeep is tracked)
+plugins/*
+!plugins/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Agentic AI
+.claude/settings.local.json
+.claude/todos.json
+.codex/
+.cursor/
+.copilot/
+.aider*
