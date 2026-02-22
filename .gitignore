@@ -22,8 +22,7 @@ plugins/*
 .DS_Store
 
 # Agentic AI
-.claude/settings.local.json
-.claude/todos.json
+.claude/
 .codex/
 .cursor/
 .copilot/
