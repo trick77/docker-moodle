@@ -7,7 +7,7 @@ chmod 0750 /var/moodledata
 
 # Copy custom plugins into the Moodle installation
 PLUGIN_SRC="/docker-plugins"
-MOODLE_ROOT="/var/www/html"
+MOODLE_ROOT="/var/www/html/public"
 
 if [ -d "$PLUGIN_SRC" ]; then
     for type_dir in "$PLUGIN_SRC"/*/; do
