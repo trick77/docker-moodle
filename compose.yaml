@@ -1,0 +1,27 @@
+services:
+  moodle:
+    build:
+      context: .
+      args:
+        MOODLE_VERSION: MOODLE_501_STABLE
+    volumes:
+      - ./moodledata:/var/moodledata
+      - ./plugins:/docker-plugins
+    restart: unless-stopped
+    networks:
+      - database_net
+    environment:
+      MOODLE_INSTALL_ADMIN_PASS: ${MOODLE_INSTALL_ADMIN_PASS}
+      MOODLE_INSTALL_ADMIN_EMAIL: ${MOODLE_INSTALL_ADMIN_EMAIL}
+      MOODLE_SITE_NAME: ${MOODLE_SITE_NAME}
+      MOODLE_DB_HOST: ${MOODLE_DB_HOST}
+      MOODLE_DB_NAME: ${MOODLE_DB_NAME}
+      MOODLE_DB_USER: ${MOODLE_DB_USER}
+      MOODLE_DB_PASS: ${MOODLE_DB_PASS}
+      MOODLE_DB_PORT: ${MOODLE_DB_PORT}
+      MOODLE_DB_PREFIX: ${MOODLE_DB_PREFIX:-mdl_}
+      MOODLE_SITE_URL: ${MOODLE_SITE_URL}
+
+networks:
+  database_net:
+    external: true
