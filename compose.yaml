@@ -10,6 +10,12 @@ services:
     ports:
       - "127.0.0.1:${MOODLE_HOST_PORT:-8080}:80"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/login/index.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
     networks:
       - database_net
     environment:
