@@ -7,6 +7,8 @@ services:
     volumes:
       - ./moodledata:/var/moodledata
       - ./plugins:/docker-plugins
+    ports:
+      - "127.0.0.1:${MOODLE_HOST_PORT:-8080}:80"
     restart: unless-stopped
     networks:
       - database_net
