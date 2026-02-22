@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     curl \
     cron \
+    ghostscript \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -44,6 +45,11 @@ RUN { \
     echo "memory_limit = 512M"; \
     echo "upload_max_filesize = 20M"; \
     echo "post_max_size = 20M"; \
+    echo "opcache.memory_consumption = 256"; \
+    echo "opcache.max_accelerated_files = 10000"; \
+    echo "opcache.revalidate_freq = 60"; \
+    echo "opcache.save_comments = 1"; \
+    echo "opcache.validate_timestamps = 1"; \
     } > /usr/local/etc/php/conf.d/moodle.ini
 
 RUN a2enmod rewrite
