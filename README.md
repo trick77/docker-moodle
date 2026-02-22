@@ -1,43 +1,6 @@
 # docker-moodle
 
-Dockerized Moodle 5.1 on PHP 8.4-Apache. Connects to an external MariaDB and optionally sits behind a reverse proxy (e.g. Traefik).
-
-## Prerequisites
-
-A MariaDB instance must be running and reachable via Docker networking before starting Moodle. This stack does **not** include a database — provision one separately on the `database_net` network.
-
-Minimal example (no backups — add your own for production):
-
-```bash
-docker network create database_net
-```
-
-```yaml
-# database/compose.yaml
-services:
-  mariadb:
-    image: mariadb:11
-    container_name: mariadb
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: changeme
-    volumes:
-      - mariadb-data:/var/lib/mysql
-    networks:
-      - database_net
-
-volumes:
-  mariadb-data:
-    name: mariadb-data
-
-networks:
-  database_net:
-    external: true
-```
-
-```bash
-docker compose -f database/compose.yaml up -d
-```
+Dockerized Moodle 5.1 on PHP 8.4-Apache. Requires an external MariaDB container on a shared Docker network — not included, must be provisioned separately.
 
 ## Quick start
 
@@ -69,3 +32,37 @@ plugins/local/myplugin/
 
 No rebuild needed — `entrypoint.sh` copies them in on startup.
 
+## Database setup
+
+This stack expects a MariaDB container on the `database_net` Docker network. Minimal example (no backups — add your own for production):
+
+```bash
+docker network create database_net
+```
+
+```yaml
+# database/compose.yaml
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - database_net
+
+volumes:
+  mariadb-data:
+    name: mariadb-data
+
+networks:
+  database_net:
+    external: true
+```
+
+```bash
+docker compose -f database/compose.yaml up -d
+```
