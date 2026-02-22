@@ -16,6 +16,9 @@ $CFG->dboptions = array(
 );
 
 $CFG->wwwroot   = getenv('MOODLE_SITE_URL');
+if (getenv('MOODLE_SSL_PROXY') === 'true') {
+    $CFG->sslproxy = true;
+}
 $CFG->dataroot  = '/var/moodledata';
 $CFG->admin     = 'admin';
 $CFG->directorypermissions = 02750;

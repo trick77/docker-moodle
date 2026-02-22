@@ -23,6 +23,7 @@ services:
       MOODLE_DB_PORT: ${MOODLE_DB_PORT}
       MOODLE_DB_PREFIX: ${MOODLE_DB_PREFIX:-mdl_}
       MOODLE_SITE_URL: ${MOODLE_SITE_URL}
+      MOODLE_SSL_PROXY: ${MOODLE_SSL_PROXY:-false}
 
 networks:
   database_net:
