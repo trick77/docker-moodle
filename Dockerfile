@@ -41,6 +41,9 @@ RUN pecl install redis && docker-php-ext-enable redis
 
 RUN a2enmod rewrite
 
+RUN ln -sf /dev/stderr /var/log/apache2/error.log \
+    && ln -sf /dev/stdout /var/log/apache2/access.log
+
 # Point Apache DocumentRoot to public/ (required by Moodle 5.1+)
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
