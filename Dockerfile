@@ -41,6 +41,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 RUN pecl install redis && docker-php-ext-enable redis
 
 RUN { \
+    echo "log_errors = On"; \
+    echo "display_errors = Off"; \
     echo "max_input_vars = 5000"; \
     echo "memory_limit = 512M"; \
     echo "upload_max_filesize = 20M"; \
