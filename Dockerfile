@@ -5,7 +5,7 @@ RUN git clone --depth=1 --branch=${MOODLE_VERSION} \
     https://github.com/moodle/moodle.git /moodle
 
 # Stage 2: Runtime
-FROM php:8.4-apache
+FROM php:8.5-apache
 
 RUN apt-get update && apt-get install -y \
     libpng-dev \
