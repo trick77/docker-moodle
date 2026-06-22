@@ -1,0 +1,76 @@
+name: Build and publish image
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - id: ver
+        name: Derive image tags from the Moodle version
+        run: |
+          # The Moodle release drives the image version (no git-tag semver here).
+          # Read the single source of truth: the MOODLE_VERSION default in the Dockerfile.
+          BRANCH=$(grep -oP '^ARG MOODLE_VERSION=\K.*' Dockerfile)
+          if [ -z "$BRANCH" ]; then
+            echo "Could not read MOODLE_VERSION from Dockerfile" >&2
+            exit 1
+          fi
+          SHORT=$(git rev-parse --short HEAD)
+
+          # MOODLE_502_STABLE -> 502 -> 5.2 / 5
+          NUM=$(printf '%s' "$BRANCH" | grep -oP '(?<=MOODLE_)\d+' || true)
+          if [ -n "$NUM" ]; then
+            MAJOR=$((10#$NUM / 100))
+            MINOR=$((10#$NUM % 100))
+            MINORTAG="$MAJOR.$MINOR"
+          else
+            # Non-stable branch (e.g. main/weekly): fall back to branch name only.
+            MAJOR=""
+            MINORTAG=""
+          fi
+
+          echo "branch=$BRANCH"     >> "$GITHUB_OUTPUT"
+          echo "major=$MAJOR"       >> "$GITHUB_OUTPUT"
+          echo "minortag=$MINORTAG" >> "$GITHUB_OUTPUT"
+          echo "short=$SHORT"       >> "$GITHUB_OUTPUT"
+          echo "Building $BRANCH -> ${MINORTAG:-(branch-only)} at $SHORT" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          build-args: |
+            MOODLE_VERSION=${{ steps.ver.outputs.branch }}
+          # Assumes MOODLE_VERSION is a MOODLE_xxx_STABLE branch (always true here), so
+          # minortag/major are populated. A non-stable branch would need those lines dropped.
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.branch }}
+            ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.minortag }}
+            ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.major }}
+            ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.short }}
+            ghcr.io/${{ github.repository }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

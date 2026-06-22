@@ -1,9 +1,6 @@
 services:
   moodle:
-    build:
-      context: .
-      args:
-        MOODLE_VERSION: MOODLE_501_STABLE
+    image: ghcr.io/trick77/docker-moodle:${MOODLE_VERSION:-MOODLE_502_STABLE}
     volumes:
       - ./moodledata:/var/moodledata
       - ./plugins:/docker-plugins

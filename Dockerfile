@@ -1,11 +1,11 @@
 # Stage 1: Clone Moodle source
 FROM alpine/git AS moodle-src
-ARG MOODLE_VERSION=MOODLE_501_STABLE
+ARG MOODLE_VERSION=MOODLE_502_STABLE
 RUN git clone --depth=1 --branch=${MOODLE_VERSION} \
     https://github.com/moodle/moodle.git /moodle
 
 # Stage 2: Runtime
-FROM php:8.5-apache
+FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y \
     libpng-dev \
