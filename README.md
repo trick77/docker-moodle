@@ -1,6 +1,6 @@
 # docker-moodle
 
-Dockerized Moodle 5.2 on PHP 8.4-Apache. Requires a separate MariaDB container on a shared Docker network — not included, must be provisioned separately.
+Dockerized Moodle on PHP-Apache. Requires a separate MariaDB container on a shared Docker network — not included, must be provisioned separately.
 
 ## Usage
 
