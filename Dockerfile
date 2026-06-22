@@ -1,8 +1,18 @@
 # Stage 1: Clone Moodle source
+# After cloning, assert that the code Moodle actually ships on this branch matches
+# MOODLE_VERSION — Moodle's own public/version.php $branch (e.g. '502') must equal the
+# number in MOODLE_VERSION. Since the image tags are derived from the same
+# MOODLE_VERSION, this guarantees the published tag reflects the incorporated version.
+# A mismatch (typo'd or mislabeled branch) fails the build.
 FROM alpine/git AS moodle-src
 ARG MOODLE_VERSION=MOODLE_502_STABLE
 RUN git clone --depth=1 --branch=${MOODLE_VERSION} \
-    https://github.com/moodle/moodle.git /moodle
+        https://github.com/moodle/moodle.git /moodle \
+ && expected=$(echo "${MOODLE_VERSION}" | grep -oE '[0-9]+' | head -n1) \
+ && actual=$(grep -oE "branch[[:space:]]*=[[:space:]]*'[0-9]+'" /moodle/public/version.php | grep -oE '[0-9]+' | head -n1) \
+ && echo "Moodle version check: MOODLE_VERSION expects branch=${expected}, public/version.php reports branch=${actual}" \
+ && [ -n "${expected}" ] && [ "${expected}" = "${actual}" ] \
+        || { echo "ERROR: incorporated Moodle version (${actual}) does not match MOODLE_VERSION (${expected})"; exit 1; }
 
 # Stage 2: Runtime
 FROM php:8.4-apache
