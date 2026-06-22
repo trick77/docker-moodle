@@ -6,7 +6,12 @@ Dockerized Moodle on PHP-Apache. Requires a separate MariaDB container on a shar
 
 ```bash
 cp .env.example .env   # edit values
-docker compose up -d --build
+
+# Prod: pull and run the published image
+docker compose up -d
+
+# Local dev: build the image locally instead of pulling
+docker compose -f compose.yaml -f compose-dev.yaml up -d --build
 ```
 
 ## Configuration

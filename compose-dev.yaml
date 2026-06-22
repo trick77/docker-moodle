@@ -1,0 +1,16 @@
+# Local development overlay: build the image locally instead of pulling from GHCR.
+#
+# Usage:
+#   docker compose -f compose.yaml -f compose-dev.yaml up -d --build
+#
+# (Specifying -f explicitly disables auto-loading of compose.override.yaml, so the
+# Traefik overlay is not applied in dev.)
+services:
+  moodle:
+    build:
+      context: .
+      args:
+        MOODLE_VERSION: ${MOODLE_VERSION:-MOODLE_502_STABLE}
+    # Override the GHCR image with a local tag so dev builds stay separate from
+    # the published image.
+    image: docker-moodle:${MOODLE_VERSION:-MOODLE_502_STABLE}
