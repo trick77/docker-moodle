@@ -41,6 +41,12 @@ if ! php /var/www/html/admin/cli/install_database.php \
     echo "Note: install_database.php exited non-zero (DB may already be installed)"
 fi
 
+# install_database.php runs as root and may write cache files (muc/config.php,
+# cache/core_component.php) into /var/moodledata owned by root. Re-assert www-data
+# ownership before the upgrade step below, which runs as www-data and would otherwise
+# fail to read those root-owned files ("Unable to load the cache configuration file").
+chown -R www-data:www-data /var/moodledata
+
 # Apply any pending Moodle DB upgrade.
 # Idempotent: upgrade.php exits 0 when no upgrade is pending, and runs the migration
 # non-interactively when one is. Run as www-data so cache files written under
