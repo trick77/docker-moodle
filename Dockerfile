@@ -1,6 +1,6 @@
 # Stage 1: Clone Moodle source
 FROM alpine/git AS moodle-src
-ARG MOODLE_VERSION=MOODLE_501_STABLE
+ARG MOODLE_VERSION=MOODLE_502_STABLE
 RUN git clone --depth=1 --branch=${MOODLE_VERSION} \
     https://github.com/moodle/moodle.git /moodle
 

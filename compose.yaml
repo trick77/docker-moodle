@@ -3,7 +3,8 @@ services:
     build:
       context: .
       args:
-        MOODLE_VERSION: MOODLE_501_STABLE
+        MOODLE_VERSION: ${MOODLE_VERSION:-MOODLE_502_STABLE}
+    image: docker-moodle:${MOODLE_VERSION:-MOODLE_502_STABLE}
     volumes:
       - ./moodledata:/var/moodledata
       - ./plugins:/docker-plugins

@@ -41,6 +41,19 @@ if ! php /var/www/html/admin/cli/install_database.php \
     echo "Note: install_database.php exited non-zero (DB may already be installed)"
 fi
 
+# Apply any pending Moodle DB upgrade.
+# Idempotent: upgrade.php exits 0 when no upgrade is pending, and runs the migration
+# non-interactively when one is. Run as www-data so cache files written under
+# /var/moodledata keep correct ownership. Guarded so a blocked upgrade (e.g. an
+# incompatible custom plugin) logs loudly and still starts Apache, instead of crashing
+# the container into a boot loop under `set -e`.
+echo "Checking for pending Moodle upgrade..."
+if ! su -s /bin/bash www-data -c \
+    "php /var/www/html/admin/cli/upgrade.php --non-interactive"; then
+    echo "ERROR: Moodle upgrade did not complete. Starting Apache anyway so the admin" \
+         "can inspect; the site may show 'upgrade required' until resolved." >&2
+fi
+
 chown -R www-data:www-data /var/moodledata
 
 exec apache2-foreground
