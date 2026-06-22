@@ -43,11 +43,21 @@ jobs:
             MINORTAG=""
           fi
 
+          # Exact patch release from Moodle's own public/version.php $release
+          # (e.g. '5.2.1+ (Build: ...)' -> 5.2.1). Falls back to the minor tag if a
+          # patch number isn't present. The build-time assertion in the Dockerfile
+          # guarantees this branch's code matches BRANCH, so the patch tag is trustworthy.
+          PATCH=$(curl -fsSL "https://raw.githubusercontent.com/moodle/moodle/$BRANCH/public/version.php" \
+            | grep -oE "release[[:space:]]*=[[:space:]]*'[0-9.]+" \
+            | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -n1)
+          [ -z "$PATCH" ] && PATCH="$MINORTAG"
+
           echo "branch=$BRANCH"     >> "$GITHUB_OUTPUT"
           echo "major=$MAJOR"       >> "$GITHUB_OUTPUT"
           echo "minortag=$MINORTAG" >> "$GITHUB_OUTPUT"
+          echo "patchtag=$PATCH"    >> "$GITHUB_OUTPUT"
           echo "short=$SHORT"       >> "$GITHUB_OUTPUT"
-          echo "Building $BRANCH -> ${MINORTAG:-(branch-only)} at $SHORT" >> "$GITHUB_STEP_SUMMARY"
+          echo "Building $BRANCH -> ${PATCH:-(branch-only)} (minor ${MINORTAG:-n/a}) at $SHORT" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: docker/setup-buildx-action@v4
 
@@ -68,6 +78,7 @@ jobs:
           # minortag/major are populated. A non-stable branch would need those lines dropped.
           tags: |
             ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.branch }}
+            ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.patchtag }}
             ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.minortag }}
             ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.major }}
             ghcr.io/${{ github.repository }}:${{ steps.ver.outputs.short }}
