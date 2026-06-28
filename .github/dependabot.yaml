@@ -9,6 +9,11 @@ updates:
       timezone: "Europe/Zurich"
     commit-message:
       prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "php"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-major"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

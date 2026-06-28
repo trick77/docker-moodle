@@ -15,7 +15,7 @@ RUN git clone --depth=1 --branch=${MOODLE_VERSION} \
         || { echo "ERROR: incorporated Moodle version (${actual}) does not match MOODLE_VERSION (${expected})"; exit 1; }
 
 # Stage 2: Runtime
-FROM php:8.5-apache
+FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y \
     libpng-dev \
