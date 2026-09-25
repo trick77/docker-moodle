@@ -23,6 +23,7 @@ plugins/*
 
 # Agentic AI
 .claude/
+.agents/
 .codex/
 .cursor/
 .copilot/
