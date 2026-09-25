@@ -28,6 +28,3 @@ plugins/*
 .cursor/
 .copilot/
 .aider*
-
-# Local git worktrees
-.agents/worktrees/
