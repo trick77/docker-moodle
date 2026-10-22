@@ -17,6 +17,10 @@ RUN git clone --depth=1 --branch=${MOODLE_VERSION} \
 # Stage 2: Runtime
 FROM php:8.4-apache
 
+# PHP2Shell (CVE-2026-109618, CVE-2026-109619): fixed in 8.4.27. Fail the build if a
+# stale base image or cache would ship an unpatched PHP under a patched-looking tag.
+RUN php -r 'exit(version_compare(PHP_VERSION, "8.4.27", ">=") ? 0 : 1);'
+
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -61,6 +65,7 @@ RUN { \
     echo "opcache.revalidate_freq = 60"; \
     echo "opcache.save_comments = 1"; \
     echo "opcache.validate_timestamps = 1"; \
+    echo "session.upload_progress.enabled = Off"; \
     } > /usr/local/etc/php/conf.d/moodle.ini
 
 RUN a2enmod rewrite
