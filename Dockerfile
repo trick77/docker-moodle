@@ -66,7 +66,12 @@ RUN { \
     echo "opcache.save_comments = 1"; \
     echo "opcache.validate_timestamps = 1"; \
     echo "session.upload_progress.enabled = Off"; \
+    echo "expose_php = Off"; \
     } > /usr/local/etc/php/conf.d/moodle.ini
+
+# Don't advertise Apache/OS/PHP versions in headers and error pages.
+RUN sed -ri -e 's/^ServerTokens .*/ServerTokens Prod/' -e 's/^ServerSignature .*/ServerSignature Off/' \
+        /etc/apache2/conf-available/security.conf
 
 RUN a2enmod rewrite
 
